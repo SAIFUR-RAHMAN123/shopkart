@@ -1,3 +1,4 @@
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -11,5 +12,8 @@ app.use(express.json());
 if (process.env.NODE_ENV !== 'production') app.use(morgan('dev'));
 
 app.get('/api/health', (req, res) => res.json({ success: true, message: 'ShopKart API running' }));
+
+app.use(notFound);
+app.use(errorHandler);
 
 export default app;
