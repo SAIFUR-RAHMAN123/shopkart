@@ -1,7 +1,12 @@
+import { useSearchParams } from 'react-router-dom';
+import ProductListing from '../components/ProductListing';
+
 export default function SearchResults() {
-  return (
-    <div className="mx-auto max-w-7xl px-4 py-6">
-      <h1 className="text-2xl font-bold">SearchResults</h1>
-    </div>
-  );
+  const [searchParams] = useSearchParams();
+  const q = searchParams.get('q')?.trim() || '';
+
+  if (!q) {
+    return <p className="py-20 text-center text-gray-600">Type something in the search bar to find products.</p>;
+  }
+  return <ProductListing title={`Results for "${q}"`} fixed={{ search: q }} />;
 }
