@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, Menu, X, ChevronDown } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { getCategories } from '../services/categoryService';
+import { useCartStore } from '../store/cartStore';
 
 export default function Navbar() {
   const user = useAuthStore((s) => s.user);
@@ -11,7 +12,7 @@ export default function Navbar() {
   const [q, setQ] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
-  const cartCount = 0; // wired up in Phase 8
+  const cartCount = useCartStore((s) => s.cart?.summary?.itemCount ?? 0);
 
   useEffect(() => {
     getCategories().then((d) => setCategories(d.categories)).catch(() => {});

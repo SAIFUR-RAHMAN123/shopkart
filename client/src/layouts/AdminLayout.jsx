@@ -1,10 +1,13 @@
 import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, ClipboardList, Users, Store, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, Tags, ClipboardList, Users, Store, LogOut } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { Suspense } from 'react';
+import Spinner from '../components/Spinner';
 
 const links = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/products', label: 'Products', icon: Package },
+  { to: '/admin/categories', label: 'Categories', icon: Tags },
   { to: '/admin/orders', label: 'Orders', icon: ClipboardList },
   { to: '/admin/users', label: 'Users', icon: Users },
 ];
@@ -24,8 +27,7 @@ export default function AdminLayout() {
               to={to}
               end={end}
               className={({ isActive }) =>
-                `flex items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm ${
-                  isActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'
+                `flex items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'
                 }`
               }
             >
@@ -44,7 +46,9 @@ export default function AdminLayout() {
         </nav>
       </aside>
       <main className="flex-1 bg-gray-50 p-4 md:p-6">
-        <Outlet />
+        <Suspense fallback={<Spinner />}>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   );

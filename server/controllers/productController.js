@@ -6,7 +6,7 @@ export const getProducts = asyncHandler(async (req, res) => {
 });
 
 export const getFilterOptions = asyncHandler(async (req, res) => {
-  res.json({ success: true, ...(await service.getFilterOptions()) });
+  res.json({ success: true, ...(await service.getFilterOptions(req.query)) });
 });
 
 export const getProduct = asyncHandler(async (req, res) => {

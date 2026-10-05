@@ -12,15 +12,27 @@ export const errorHandler = (err, req, res, next) => {
   if (err.name === 'ValidationError') {
     statusCode = 400;
     message = 'Validation failed';
-    errors = Object.values(err.errors).map((e) => ({ field: e.path, message: e.message }));
+    errors = Object.values(err.errors).map((e) => ({
+      field: e.path,
+      message: e.message,
+    }));
   } else if (err.name === 'CastError') {
     statusCode = 400;
     message = `Invalid ${err.path}`;
+  } else if (err.type === 'entity.parse.failed') {
+    statusCode = 400;
+    message = 'Invalid JSON in request body';
+  } else if (err.type === 'entity.too.large') {
+    statusCode = 413;
+    message = 'Request body too large';
   } else if (err.code === 11000) {
     statusCode = 409;
     const field = Object.keys(err.keyValue)[0];
     message = `${field} already exists`;
-  } else if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+  } else if (
+    err.name === 'JsonWebTokenError' ||
+    err.name === 'TokenExpiredError'
+  ) {
     statusCode = 401;
     message = 'Invalid or expired token';
   }
@@ -28,7 +40,9 @@ export const errorHandler = (err, req, res, next) => {
   // Never leak internals for unexpected errors
   if (statusCode === 500 && !err.isOperational) {
     console.error(err);
-    if (process.env.NODE_ENV === 'production') message = 'Something went wrong';
+    if (process.env.NODE_ENV === 'production') {
+      message = 'Something went wrong';
+    }
   }
 
   res.status(statusCode).json({

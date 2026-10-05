@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/authStore';
+import { useCartStore } from './store/cartStore';
 
 import MainLayout from './layouts/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
@@ -22,21 +23,35 @@ import OrderDetails from './pages/OrderDetails';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 
-import Dashboard from './pages/admin/Dashboard';
-import ManageProducts from './pages/admin/ManageProducts';
-import AddProduct from './pages/admin/AddProduct';
-import EditProduct from './pages/admin/EditProduct';
-import ManageOrders from './pages/admin/ManageOrders';
-import AdminOrderDetails from './pages/admin/AdminOrderDetails';
-import ManageUsers from './pages/admin/ManageUsers';
+import { lazy } from 'react';
+import ScrollToTop from './components/ScrollToTop';
+
+const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
+const ManageProducts = lazy(() => import('./pages/admin/ManageProducts'));
+const AddProduct = lazy(() => import('./pages/admin/AddProduct'));
+const EditProduct = lazy(() => import('./pages/admin/EditProduct'));
+const ManageOrders = lazy(() => import('./pages/admin/ManageOrders'));
+const AdminOrderDetails = lazy(() => import('./pages/admin/AdminOrderDetails'));
+const ManageUsers = lazy(() => import('./pages/admin/ManageUsers'));
+const ManageCategories = lazy(() => import('./pages/admin/ManageCategories'));
 
 export default function App() {
   const fetchMe = useAuthStore((s) => s.fetchMe);
   useEffect(() => { fetchMe(); }, [fetchMe]);
 
+  const user = useAuthStore((s) => s.user);
+  const fetchCart = useCartStore((s) => s.fetchCart);
+  const resetCart = useCartStore((s) => s.reset);
+
+  useEffect(() => {
+    if (user) fetchCart();
+    else resetCart();
+  }, [user?._id]);  
+
   return (
     <>
       <Toaster position="top-right" />
+      <ScrollToTop />
       <Routes>
         <Route element={<MainLayout />}>
           <Route index element={<Home />} />
@@ -67,6 +82,7 @@ export default function App() {
             <Route path="orders" element={<ManageOrders />} />
             <Route path="orders/:id" element={<AdminOrderDetails />} />
             <Route path="users" element={<ManageUsers />} />
+            <Route path="categories" element={<ManageCategories />} />
           </Route>
         </Route>
       </Routes>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import StarRating from './StarRating';
 import PriceTag from './PriceTag';
+import ProductImage from './ProductImage';
 
 export default function ProductCard({ product: p }) {
   return (
@@ -9,7 +10,7 @@ export default function ProductCard({ product: p }) {
       className="group flex flex-col overflow-hidden rounded-lg bg-white shadow-sm transition hover:shadow-lg"
     >
       <div className="relative aspect-square bg-gray-100">
-        <img
+        <ProductImage
           src={p.images[0]}
           alt={p.name}
           loading="lazy"

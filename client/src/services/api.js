@@ -7,7 +7,7 @@ export const tokenStorage = {
   clear: () => localStorage.removeItem(TOKEN_KEY),
 };
 
-const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || '/api' });
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || '/api', timeout: 30000 });
 
 api.interceptors.request.use((config) => {
   const token = tokenStorage.get();
@@ -27,7 +27,12 @@ api.interceptors.response.use(
     }
 
     const error = new Error(
-      data?.message || (err.request ? 'Cannot reach the server. Please try again.' : 'Something went wrong')
+      data?.message ||
+      (err.code === 'ECONNABORTED'
+        ? 'The request timed out. Please try again.'
+        : err.request
+          ? 'Cannot reach the server. Please try again.'
+          : 'Something went wrong')
     );
     error.status = status;
     error.errors = data?.errors; // [{ field, message }] for validation errors
